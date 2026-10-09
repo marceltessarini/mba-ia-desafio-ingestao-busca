@@ -2,14 +2,14 @@ from search import search_prompt
 
 def main():
     # TODO pedir para o usuario
-    question = "Qual capital do Brasil?"
+    question = input("Faça sua pergunta: ")
     chain = search_prompt(question)
 
     if not chain:
         print("Não foi possível iniciar o chat. Verifique os erros de inicialização.")
         return
     
-    print("Resultado: {0}".format(chain))
+    print("Resposta: {0}".format(chain))
 
 if __name__ == "__main__":
     main()

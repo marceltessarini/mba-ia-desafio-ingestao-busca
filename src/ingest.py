@@ -9,6 +9,8 @@ load_dotenv()
 
 PDF_PATH = os.getenv("PDF_PATH")
 EMBEDDING_MODEL = os.getenv("GOOGLE_EMBEDDING_MODEL")
+DATABASE_URL = os.getenv("DATABASE_URL")
+COLLECTION_NAME = os.getenv("PG_VECTOR_COLLECTION_NAME")
 
 def ingest_pdf():
     print("Lendo PDF")
@@ -24,14 +26,12 @@ def ingest_pdf():
     embeddings = GoogleGenerativeAIEmbeddings(model=EMBEDDING_MODEL)
 
     # 4. Conexão e armazenamento no PostgreSQL (pgVector)
-    connection = "postgresql+psycopg://postgres:postgres@localhost:5432/postgres"
-    collection_name = "pdf_documents"
 
     vectorstore = PGVector.from_documents(
         documents=chunks,
         embedding=embeddings,
-        connection=connection,
-        collection_name=collection_name
+        connection=DATABASE_URL,
+        collection_name=COLLECTION_NAME
     )
 
     print("Ingestão concluída com sucesso!")
