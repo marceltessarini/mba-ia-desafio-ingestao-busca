@@ -153,3 +153,10 @@ python src/chat.py
 ## Entregável
 
 Repositório público no GitHub contendo todo o código-fonte e README com instruções claras de execução do projeto.
+
+## Pré-requisitos
+
+- **Python**: Versão `3.11.17` (recomendada)
+- **Docker & Docker Compose**: Para execução do banco de dados PostgreSQL com pgVector
+
+> **Nota sobre o ambiente Python:** Este projeto foi desenvolvido e testado utilizando o **Python 3.11.17**. Recomenda-se a utilização desta versão para garantir a compatibilidade com todas as dependências de IA (LangChain, PGVector, etc.). Fica a critério do avaliador utilizar o seu gestor de ambientes preferido (`venv`, `conda`, `pyenv`, etc.).

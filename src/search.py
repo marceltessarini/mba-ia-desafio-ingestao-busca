@@ -26,4 +26,5 @@ RESPONDA A "PERGUNTA DO USUÁRIO"
 """
 
 def search_prompt(question=None):
-    pass
+    resposta = "Brasilia"
+    return "Pergunta: {0}\nResposta: {1}".format(question, resposta)

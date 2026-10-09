@@ -6,7 +6,7 @@ load_dotenv()
 PDF_PATH = os.getenv("PDF_PATH")
 
 def ingest_pdf():
-    pass
+    print("Simulando leitura do PDF")
 
 
 if __name__ == "__main__":
