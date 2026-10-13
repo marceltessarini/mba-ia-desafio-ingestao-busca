@@ -4,6 +4,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmb
 from langchain_postgres import PGVector
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
+from prompts_mba import TEMPLATE_PROMPT_HYDE, TEMPLATE_PROMPT_HYDE_ROLE
 
 # Carrega as variáveis de ambiente do arquivo .env
 load_dotenv()
@@ -15,20 +16,7 @@ collections = os.getenv("PG_VECTOR_COLLECTION_NAME")
 
 
 # Template de prompt otimizado para gerar o documento hipotético (HyDE)
-hyde_prompt_template = ChatPromptTemplate.from_messages([
-    (
-        "system",
-        "Você é um especialista sênior em engenharia, negócios e análise de dados. "
-        "Sua tarefa é escrever um parágrafo curto, técnico e formal "
-        "(como se fosse um trecho extraído de um manual técnico ou relatório corporativo) "
-        "que responda diretamente à pergunta do usuário.\n\n"
-        "REGRAS ESTRITAS:\n"
-        "1. Escreva apenas o conteúdo técnico explicativo e factual.\n"
-        "2. NUNCA inclua saudações, introduções (ex: 'Aqui está:'), conversas ou notas de rodapé.\n"
-        "3. Utilize vocabulário técnico preciso e termos diretos."
-    ),
-    ("human", "Pergunta do Usuário: {pergunta}")
-])
+hyde_prompt_template = ChatPromptTemplate.from_messages([TEMPLATE_PROMPT_HYDE_ROLE])
 
 def executar_busca_hyde():
     if not connection:
