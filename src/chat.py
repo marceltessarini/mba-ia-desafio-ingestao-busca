@@ -1,7 +1,6 @@
 from search import search_prompt
 
 def main():
-    # TODO pedir para o usuario
     question = input("Faça sua pergunta: ")
     chain = search_prompt(question)
 
