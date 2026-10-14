@@ -1,18 +1,18 @@
-from prompts_mba import build_direct_RAG_prompt
+from prompts_mba import build_prompt_with_context
 from llm_models import similarity_search, invoke_llm, format_chunks_as_string
 
-def search_prompt(pergunta):
-  print("Search.")
+def search_prompt(question):
+  print("Search Direct RAG.")
 
-  similarity_search_result = similarity_search(pergunta, k=10)
+  similarity_search_result = similarity_search(question, k=10)
 
-  print("Gerando o prompt")
+  print("Gerando o prompt com contexto")
   context = format_chunks_as_string(similarity_search_result)
-  prompt_direct_RAG = build_direct_RAG_prompt(contexto=context, pergunta=pergunta)
+  prompt_with_context = build_prompt_with_context(context, question)
 
-  print("Invocando LLM")
+  print("Invocando LLM com contexto")
 
-  result_llm = invoke_llm(prompt_direct_RAG, temperature=0)
+  response = invoke_llm(prompt_with_context, temperature=0)
 
 
-  return result_llm
+  return response

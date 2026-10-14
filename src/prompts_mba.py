@@ -1,4 +1,4 @@
-def build_direct_RAG_prompt(contexto, pergunta):
+def build_prompt_with_context(context, question):
     promptTemplate = """
     CONTEXTO:
     {contexto}
@@ -26,20 +26,24 @@ def build_direct_RAG_prompt(contexto, pergunta):
     RESPONDA A "PERGUNTA DO USUÁRIO"
     """
 
-    return promptTemplate.format(contexto = contexto, pergunta = pergunta)
+    return promptTemplate.format(contexto = context, pergunta = question)
 
-def build_prompt_HyDE(pergunta):
+def build_prompt_HyDE(question):
     templatePrompt = """
-    Você é um especialista em mercado imobiliário e em investimentos.
-    Sua tarefa é escrever um parágrafo curto, técnico e formal 
-    (como se fosse um trecho extraído de um manual técnico ou relatório corporativo)
-    que responda diretamente à pergunta do usuário.
-    REGRAS ESTRITAS:
-    1. Escreva apenas o conteúdo técnico explicativo e factual.
-    2. NUNCA inclua saudações, introduções (ex: 'Aqui está:'), conversas ou notas de rodapé.
-    3. Utilize vocabulário técnico preciso e termos diretos.
+    Escreva um parágrafo conciso que responda de forma clara
+    à pergunta abaixo. A resposta deve parecer um documento real,
+    com datas, fatos ou descrições prováveis, mesmo que hipotéticas.
+    Não use linguagem especulativa (não diga "talvez" ou "possivelmente").
+    Pergunta: "{pergunta}"
+    """
 
+    return templatePrompt.format(pergunta=question)
+
+def build_prompt_HyDETestar(question):
+    templatePrompt = """
+    Você é um especialista em investimentos. Escreva um parágrafo técnico e detalhado para responder à pergunta do usuário. 
+    Não se preocupe se o dado exato é real ou inventado, foque em usar a terminologia correta do mercado e a estrutura de um relatório financeiro.
     Pergunta: {pergunta}
     """
 
-    return templatePrompt.format(pergunta=pergunta)
+    return templatePrompt.format(pergunta=question)
