@@ -14,18 +14,13 @@ COLLECTION_NAME = os.getenv("PG_VECTOR_COLLECTION_NAME")
 
 def ingest_pdf():
     print("Lendo PDF")
-    # 1. Carregar PDF
     loader = PyPDFLoader(PDF_PATH)
     docs = loader.load()
 
-    # 2. Dividir em chunks (requisito do README: 1000 char, 150 overlap)
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=150)
     chunks = text_splitter.split_documents(docs)
 
-    # 3. Modelo de Embeddings do Google
     embeddings = GoogleGenerativeAIEmbeddings(model=EMBEDDING_MODEL)
-
-    # 4. Conexão e armazenamento no PostgreSQL (pgVector)
 
     vectorstore = PGVector.from_documents(
         documents=chunks,

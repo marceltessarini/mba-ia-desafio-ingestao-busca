@@ -1,20 +1,18 @@
-from prompts_mba import buildDirectRAGPrompt
-from llm_models import similaritySearch, invokePrompt
+from prompts_mba import build_direct_RAG_prompt
+from llm_models import similarity_search, invoke_llm, format_chunks_as_string
 
-def search_prompt(pergunta=None):
-  similaritySearchResult = similaritySearch(pergunta, k=10)
+def search_prompt(pergunta):
+  print("Search.")
 
-  contexto = "\n\n".join([doc.page_content for doc, score in similaritySearchResult])
+  similarity_search_result = similarity_search(pergunta, k=10)
 
-  promptDirectRAG = buildDirectRAGPrompt(contexto=contexto, pergunta=pergunta)
-  print("O prompt gerado eh {p}".format(p = promptDirectRAG))
+  print("Gerando o prompt")
+  context = format_chunks_as_string(similarity_search_result)
+  prompt_direct_RAG = build_direct_RAG_prompt(contexto=context, pergunta=pergunta)
 
-  return invokePrompt(promptDirectRAG, temperature=0)
+  print("Invocando LLM")
+
+  result_llm = invoke_llm(prompt_direct_RAG, temperature=0)
 
 
-def main():
-   resposta = search_prompt()
-   print("Resposta: {0}".format(resposta))
-
-if __name__ == "__main__":
-    main()
+  return result_llm

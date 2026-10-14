@@ -19,11 +19,25 @@ vectorstore = PGVector(
     embeddings=embeddings
 )
 
-def similaritySearch(pergunta, k):
+def similarity_search(pergunta, k):
     return vectorstore.similarity_search_with_score(pergunta, k)
 
-def invokePrompt(prompt, temperature):
-  llm = ChatGoogleGenerativeAI(model=llm_model, temperature=temperature)
-  resposta = llm.invoke(prompt)
+def format_chunks_as_string(search_results):
+    chunks_content = [doc.page_content for doc, score in search_results]
 
-  return resposta.content
+    return "\n\n".join(chunks_content)
+
+def format_chunks_to_print(search_results):
+    formated_chunks = []
+    
+    for i, (doc, score) in enumerate(search_results, start=1):
+        block = f"--- Chunk {i} (Score: {score:.4f}) ---\n{doc.page_content}"
+        formated_chunks.append(block)
+        
+    return "\n\n".join(formated_chunks)
+
+def invoke_llm(prompt, temperature):
+  llm = ChatGoogleGenerativeAI(model=llm_model, temperature=temperature)
+  result = llm.invoke(prompt)
+
+  return result.content

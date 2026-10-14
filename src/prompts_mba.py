@@ -1,4 +1,4 @@
-def buildDirectRAGPrompt(contexto, pergunta):
+def build_direct_RAG_prompt(contexto, pergunta):
     promptTemplate = """
     CONTEXTO:
     {contexto}
@@ -28,27 +28,18 @@ def buildDirectRAGPrompt(contexto, pergunta):
 
     return promptTemplate.format(contexto = contexto, pergunta = pergunta)
 
-def buildPromptHyDE(pergunta):
+def build_prompt_HyDE(pergunta):
     templatePrompt = """
-    Escreva um parágrafo conciso que responda de forma clara
-    à pergunta abaixo. A resposta deve parecer um documento real,
-    com data, fatos ou descrições prováveis, mesmo que hipotéticas.
-    Não use linguagem especulativa (não diga "talvez" ou "possivelmente")
+    Você é um especialista em mercado imobiliário e em investimentos.
+    Sua tarefa é escrever um parágrafo curto, técnico e formal 
+    (como se fosse um trecho extraído de um manual técnico ou relatório corporativo)
+    que responda diretamente à pergunta do usuário.
+    REGRAS ESTRITAS:
+    1. Escreva apenas o conteúdo técnico explicativo e factual.
+    2. NUNCA inclua saudações, introduções (ex: 'Aqui está:'), conversas ou notas de rodapé.
+    3. Utilize vocabulário técnico preciso e termos diretos.
 
     Pergunta: {pergunta}
     """
 
     return templatePrompt.format(pergunta=pergunta)
-
-TEMPLATE_PROMPT_HYDE_ROLE = """
-Você é um especialista em mercado imobiliário e em investimentos.
-Sua tarefa é escrever um parágrafo curto, técnico e formal 
-(como se fosse um trecho extraído de um manual técnico ou relatório corporativo)
-que responda diretamente à pergunta do usuário.
-REGRAS ESTRITAS:
-1. Escreva apenas o conteúdo técnico explicativo e factual.
-2. NUNCA inclua saudações, introduções (ex: 'Aqui está:'), conversas ou notas de rodapé.
-3. Utilize vocabulário técnico preciso e termos diretos.
-
-Pergunta: {pergunta}
-"""

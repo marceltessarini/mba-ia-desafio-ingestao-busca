@@ -1,14 +1,17 @@
 from search import search_prompt
+from search_hyde import search_HyDE
 
 def main():
     question = input("Faça sua pergunta: ")
-    chain = search_prompt(question)
+    print("Pergunta: {0}\n\n".format(question))
+
+    chain = search_HyDE(question)
 
     if not chain:
         print("Não foi possível iniciar o chat. Verifique os erros de inicialização.")
         return
     
-    print("Resposta: {0}".format(chain))
+    print("\n\nResposta: {0}".format(chain))
 
 if __name__ == "__main__":
     main()
