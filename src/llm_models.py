@@ -7,8 +7,8 @@ from langchain_core.prompts import PromptTemplate
 load_dotenv()
 
 connection = os.getenv("DATABASE_URL")
-model_embeddings = os.getenv("GOOGLE_EMBEDDING_MODEL")
-llm_model = os.getenv("GOOGLE_LLM_MODEL")
+model_embeddings = os.getenv("EMBEDDING_MODEL")
+llm_model = os.getenv("LLM_MODEL")
 collections = os.getenv("PG_VECTOR_COLLECTION_NAME")
 
 embeddings = GoogleGenerativeAIEmbeddings(model=model_embeddings)

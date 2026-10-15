@@ -8,7 +8,7 @@ from langchain_postgres import PGVector
 load_dotenv()
 
 PDF_PATH = os.getenv("PDF_PATH")
-EMBEDDING_MODEL = os.getenv("GOOGLE_EMBEDDING_MODEL")
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL")
 DATABASE_URL = os.getenv("DATABASE_URL")
 COLLECTION_NAME = os.getenv("PG_VECTOR_COLLECTION_NAME")
 
