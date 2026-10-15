@@ -2,10 +2,36 @@
 
 ## Objetivo
 
-Você deve entregar um software capaz de:
+O software capaz de realizar dois tipos de busca:
+
+- Direct RAG
+- HyDE
+
+Os requisitos iniciais e obrigatório do projeto foram implementados na busca Direct RAG.
+Podemos escolher o tipo de busca via variável de ambiente.
+
+Para ambas as buscas, temos:
 
 - Ingestão: Ler um arquivo PDF e salvar suas informações em um banco de dados PostgreSQL com extensão pgVector.
 - Busca: Permitir que o usuário faça perguntas via linha de comando (CLI) e receba respostas baseadas apenas no conteúdo do PDF.
+
+## Direct RAG x HyDE
+
+* Direct RAG (`search.py`)
+
+Na abordagem Direct RAG, a pergunta digitada pelo usuário é convertida diretamente em um vetor semântico e comparada contra os chunks armazenados no banco de dados.
+
+* **Quando utilizar:**
+  * **Dados específicos, privados ou tabulares:** Indicado para documentos que contêm dados altamente granulares, portfólios corporativos, tabelas de faturamento, nomes de empresas ou registros restritos que a LLM **não possui** em sua base de pré-treinamento.
+  * **Exemplo prático:** Um PDF contendo uma tabela com o *Nome da Empresa*, *Faturamento* e *Ano de Fundação*. Como os dados são internos e desconhecidos do modelo, o Direct RAG garante que a busca ocorra estritamente sobre os fatos reais contidos na fonte, evitando alucinações.
+
+* HyDE - Hypothetical Document Embeddings (`search_hyde.py`)
+
+Na abordagem HyDE, a pergunta do usuário é primeiro enviada a uma LLM para que ela gere um **documento hipotético**. Esse documento hipotético é então vetorizado para realizar a busca semântica no banco de dados.
+
+* **Quando utilizar:**
+  * **Conteúdos conceituais, teóricos e públicos:** Indicado para documentos densos de domínio público ou geral, onde a LLM possui conhecimento prévio (como manuais teóricos, livros de metodologia, leis gerais ou guias de boas práticas).
+  * **Exemplo prático:** Um PDF que funciona como um *manual de investimentos imobiliários* explicando conceitos como *Cap Rate*, estratégias de *Buy and Hold* ou análises de ativos. Perguntas vagas do usuário são traduzidas pela LLM em textos técnicos densos e ricos em vocabulário especializado, gerando um vetor de busca muito mais preciso para encontrar trechos teóricos correspondentes.
 
 ## Exemplo no CLI
 
@@ -23,6 +49,20 @@ PERGUNTA: Quantos clientes temos em 2024?
 RESPOSTA: Não tenho informações necessárias para responder sua pergunta.
 ```
 
+## Variáveis de ambiente
+
+```
+GOOGLE_API_KEY ou OPENAI_API_KEY dependendo do modelo escolhido.
+EMBEDDING_MODEL
+LLM_MODEL
+DATABASE_URL
+PG_VECTOR_COLLECTION_NAME
+PDF_PATH
+USE_DIRECT_RAG
+```
+- Se USE_DIRECT_RAG for true (padrão), então a busca Direct RAG será executada, caso contrário, HyDe será executada.
+
+
 ## Tecnologias obrigatórias
 
 - Linguagem: Python
@@ -39,87 +79,6 @@ RESPOSTA: Não tenho informações necessárias para responder sua pergunta.
 - Ingestão: `from langchain_postgres import PGVector`
 - Busca: `similarity_search_with_score(query, k=10)`
 
-## OpenAI
-
-- Crie uma API Key da OpenAI.
-- Você vai precisar de um modelo de embeddings e de um modelo de LLM para responder. Consulte a documentação oficial da OpenAI para ver os modelos disponíveis.
-
-## Gemini
-
-- Crie uma API Key da Google.
-- Você vai precisar de um modelo de embeddings e de um modelo de LLM para responder. Consulte a documentação oficial do Google para ver os modelos disponíveis.
-
-Os limites de requisições gratuitas dos modelos podem mudar com frequência. Para informações atualizadas, consulte a documentação oficial do Google.
-
-## Escolha dos modelos
-
-Este desafio não fixa modelos. Nomes e versões mudam com frequência e alguns são descontinuados, então faz parte do desafio consultar a documentação oficial do provedor que você escolher, ver quais modelos estão disponíveis no momento e selecionar os que atendem ao objetivo. Para o volume deste desafio, os modelos mais leves e baratos de cada provedor são suficientes.
-
-Atenção: modelos de embedding diferentes geram vetores com dimensões diferentes. A tabela de vetores é criada na primeira ingestão, já com a dimensão do modelo que você escolheu. Se você trocar de modelo de embeddings depois disso, a ingestão passa a falhar por incompatibilidade de dimensão. Nesse caso é responsabilidade sua apagar a collection existente (ou o volume do banco) e refazer a ingestão do zero com o novo modelo.
-
-## Requisitos
-
-### 1. Ingestão do PDF
-
-- O PDF deve ser dividido em chunks de 1000 caracteres com overlap de 150.
-- Cada chunk deve ser convertido em embedding.
-- Os vetores devem ser armazenados no banco de dados PostgreSQL com pgVector.
-
-### 2. Consulta via CLI
-
-Criar um script Python para simular um chat no terminal.
-
-Passos ao receber uma pergunta:
-
-- Vetorizar a pergunta.
-- Buscar os 10 resultados mais relevantes (k=10) no banco vetorial.
-- Montar o prompt e chamar a LLM.
-- Retornar a resposta ao usuário.
-
-Prompt a ser utilizado:
-
-```
-CONTEXTO:
-{resultados concatenados do banco de dados}
-
-REGRAS:
-- Responda somente com base no CONTEXTO.
-- Se a informação não estiver explicitamente no CONTEXTO, responda:
-  "Não tenho informações necessárias para responder sua pergunta."
-- Nunca invente ou use conhecimento externo.
-- Nunca produza opiniões ou interpretações além do que está escrito.
-
-EXEMPLOS DE PERGUNTAS FORA DO CONTEXTO:
-Pergunta: "Qual é a capital da França?"
-Resposta: "Não tenho informações necessárias para responder sua pergunta."
-
-Pergunta: "Quantos clientes temos em 2024?"
-Resposta: "Não tenho informações necessárias para responder sua pergunta."
-
-Pergunta: "Você acha isso bom ou ruim?"
-Resposta: "Não tenho informações necessárias para responder sua pergunta."
-
-PERGUNTA DO USUÁRIO:
-{pergunta do usuário}
-
-RESPONDA A "PERGUNTA DO USUÁRIO"
-```
-
-## Estrutura obrigatória do projeto
-
-Faça um fork do repositório para utilizar a estrutura abaixo: https://github.com/devfullcycle/mba-ia-desafio-ingestao-busca
-
-```
-├── docker-compose.yml
-├── requirements.txt      # Dependências
-├── .env.example          # Template das variáveis de ambiente
-├── src/
-│   ├── ingest.py         # Script de ingestão do PDF
-│   ├── search.py         # Script de busca
-│   ├── chat.py           # CLI para interação com usuário
-├── document.pdf          # PDF para ingestão
-└── README.md             # Instruções de execução
-```
 
 ## VirtualEnv para Python
 
@@ -150,9 +109,6 @@ python src/ingest.py
 python src/chat.py
 ```
 
-## Entregável
-
-Repositório público no GitHub contendo todo o código-fonte e README com instruções claras de execução do projeto.
 
 ## Pré-requisitos
 
